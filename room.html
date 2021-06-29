@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <title>Consulting Room - UP Boutique Fashion Consulting</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+      
+    <div class="flex flex-col min-h-screen">
+
+        <header class="w-full bg-purple-500">
+            <div
+              class="max-w-6xl w-11/12 mx-auto py-6 flex flex-wrap items-end text-white"
+            >
+              <a href="/" class="text-3xl font-header mb-3 flex-1 lg:mb-0"
+                >UP virtual<br />consulting</a
+              >
+              <div
+                class="w-full flex flex-auto justify-start items-center lg:w-auto lg:ml-auto lg:justify-end"
+              >
+                <p class="text-xl">Room: <span id="room-id"></span></p>
+                <svg
+                  role="button"
+                  id="clipboard-btn"
+                  class="max-h-8 inline-block"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                  />
+                </svg>
+              </div>
+            </div>
+          </header>    
+          <main class="w-11/12 mx-auto my-6 h-full flex-1">
+            <section class="h-full grid grid-cols-1 md:grid-cols-2 grid-flow-row-dense items-stretch justify-items-center" id="main-content">
+              <div class="min-w-full col-span-auto h-full">
+                <h2
+                  class="text-2xl p-2 bg-purple-300 text-gray-900"
+                  id="local-username"
+                >
+                  Username
+                </h2>
+                <!-- Canvas element for video element 1 will go here -->
+              </div>
+              <div class="min-w-full col-span-auto">
+                <h2
+                  class="text-2xl p-2 bg-purple-300 text-gray-900"
+                  id="remote-username"
+                >
+                  Username
+                </h2>
+                <!-- Canvas element for video element 2 will go here -->
+              </div>
+            </section>
+          
+            <section
+              class="grid grid-cols-1 md:grid-cols-2 grid-flow-row-dense items-stretch justify-items-center max-w-4xl w-10/12 mx-auto hidden" id="alert-box" >
+              <div class="col-span-full">
+                <h2 class="text-1xl md:text-2xl font-bold">
+                  Room: <span id="room-id"></span> is full!
+                </h2>
+              </div>
+            </section>
+            <div class="col-span-full flex justify-center">
+              <button
+                id="start-call-btn"
+                class="p-3 bg-purple-500 hover:bg-purple-800 text-gray-200 hover:text-gray-100 transition-colors duration-100 ease-in-out text-xl m-3 rounded-md focus:ring-offset-purple-300 disabled:opacity-70" disabled>
+                Start Call
+              </button>
+              <button
+                id="stop-call-btn"
+                class="p-3 bg-purple-500 hover:bg-purple-800 text-gray-200 hover:text-gray-100 transition-colors duration-100 ease-in-out text-xl m-3 rounded-md focus:ring-offset-purple-300 disabled:opacity-70" disabled>
+                Stop Call
+              </button>
+            </div>
+          </main>
+    </div>
+      <script type="module" src="./assets/js/room/index.js"></script>
+  </body>
+</html> 
