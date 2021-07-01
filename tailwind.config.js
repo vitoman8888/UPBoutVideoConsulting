@@ -7,6 +7,9 @@ module.exports = {
         sans: '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif',
         header: ['Major Mono Display', 'monospace'],
       },
+      scale: {
+        flip: '-1',
+      },
     },
   },
   variants: {
