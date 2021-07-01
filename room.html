@@ -55,7 +55,9 @@
                 >
                   Username
                 </h2>
-                <!-- Canvas element for video element 1 will go here -->
+                <video autoplay playsinline muted class="min-w-full h-auto transform scale-x-flip" id="local-video"></video>
+                <canvas id="local-canvas" class="hidden transform scale-x-flip min-w-full h-auto"></canvas>
+                <select id="filter-options" class="w-full"></select>
               </div>
               <div class="min-w-full col-span-auto">
                 <h2
@@ -64,7 +66,8 @@
                 >
                   Username
                 </h2>
-                <!-- Canvas element for video element 2 will go here -->
+                <video autoplay playsinline class="min-w-full h-auto transform scale-x-flip" id="remote-video"></video>
+                <canvas id="remote-canvas" class="hidden transform scale-x-flip min-w-full h-auto"></canvas>
               </div>
             </section>
           
