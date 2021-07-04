@@ -12,6 +12,7 @@ import {
   createOffer,
   closeConnection,
 } from './webrtc';
+import { getNotificationPermission, sendNotification } from './notifications';
 
 const roomIdEl = document.querySelector('#room-id');
 const clipboardBtn = document.querySelector('#clipboard-btn');
@@ -134,9 +135,12 @@ const copyToClipboard = async () => {
     if (isPresent) {
       startCallBtnEl.removeAttribute('disabled');
       remoteUserEl.textContent = username;
+      sendNotification('online');
     } else {
       startCallBtnEl.setAttribute('disabled', true);
+      stopCallBtnEl.setAttribute('disabled', true);
       remoteUserEl.textContent = 'No remote user';
+      sendNotification('offline');
     }
   };
 
@@ -154,6 +158,8 @@ const copyToClipboard = async () => {
         messageType: 'CANVAS_FILTER',
         message: filterOptionsSelectEl.value,
       });
+
+      sendNotification('connected');
     }
   };
 
@@ -165,6 +171,7 @@ const copyToClipboard = async () => {
     stopCallBtnEl.setAttribute('disabled', true);
     remoteVideoEl.classList.remove('hidden');
     remoteCanvasEl.classList.add('hidden');
+    sendNotification('stopped');
   };
   
   const handleStopCall = () => {
@@ -196,6 +203,8 @@ const copyToClipboard = async () => {
   startCallBtnEl.addEventListener('click', handleStartCall);
 
   stopCallBtnEl.addEventListener('click', handleStopCall);
+
+  getNotificationPermission();
 
   initializeVideoChat();
 

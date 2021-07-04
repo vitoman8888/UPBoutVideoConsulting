@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#home-logos {
+    svg {
+      overflow: visible;
+      path {
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+        animation: draw 5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+        @for $i from 1 through 10 {
+          &:nth-of-type(#{$i}) {
+            animation-delay: $i * 0.5s;
+          }
+        }
+      }
+      @keyframes draw {
+        from {
+          filter: drop-shadow(0 0 0 crimson);
+        }
+        to {
+          stroke-dashoffset: 400;
+          filter: drop-shadow(0 0 0.75rem crimson);
+        }
+      }
+    }
+  }
