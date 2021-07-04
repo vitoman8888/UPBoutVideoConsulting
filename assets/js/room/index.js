@@ -1,6 +1,17 @@
 import '../../css/style.scss';
-import { renderFilterOptions, handleUpdateFilter, setCanvas } from './canvas';
+import {
+  renderFilterOptions,
+  handleUpdateFilter,
+  setCanvas,
+  handleUpdateRemoteFilter,
+} from './canvas';
 import { joinRoom, sendMessage } from './firebase';
+import {
+  initializePeerListeners,
+  openPeerConnection,
+  createOffer,
+  closeConnection,
+} from './webrtc';
 
 const roomIdEl = document.querySelector('#room-id');
 const clipboardBtn = document.querySelector('#clipboard-btn');
@@ -12,11 +23,13 @@ const localUserEl = document.querySelector('#local-username');
 const mainContentEl = document.querySelector('#main-content');
 const alertBoxEl = document.querySelector('#alert-box');
 const startCallBtnEl = document.querySelector('#start-call-btn');
+const stopCallBtnEl = document.querySelector('#stop-call-btn');
 const remoteUserEl = document.querySelector('#remote-username');
 const username = `user-${Math.round(Math.random() * 100000)}`;
 
 let roomId = null;
 let stream = null;
+let remoteStream = null;
 const filterOptionsSelectEl = document.querySelector('#filter-options');
 
 const getQueryStringParams = (query) => {
@@ -88,9 +101,13 @@ const copyToClipboard = async () => {
   
     try {
       const videoStream = await startVideo();
+      let peerConnectionHandlers = initializePeerListeners(sendMessage, handleStartRemoteVideo, videoStream);
       // join the room
       const successfullyJoined = await joinRoom(roomId, username, {
         handleUserPresence,
+        handleUpdateRemoteFilter,
+        stopCall,
+        ...peerConnectionHandlers,
       });
   
       // if room is full or an error occurs close it off
@@ -123,6 +140,49 @@ const copyToClipboard = async () => {
     }
   };
 
+  const handleStartRemoteVideo = (mediaStream) => {
+    if (!remoteStream) {
+      console.log(mediaStream);
+      remoteVideoEl.srcObject = mediaStream;
+      remoteStream = mediaStream;
+      startCallBtnEl.setAttribute('disabled', true);
+      stopCallBtnEl.removeAttribute('disabled');
+      setCanvas(remoteCanvasEl, remoteVideoEl, true);
+  
+      // let remote user know what canvas filter we're using when the video starts
+      sendMessage({
+        messageType: 'CANVAS_FILTER',
+        message: filterOptionsSelectEl.value,
+      });
+    }
+  };
+
+  const stopCall = () => {
+    closeConnection();
+    remoteStream = null;
+    remoteVideoEl.srcObject.getTracks().forEach((track) => track.stop());
+    startCallBtnEl.removeAttribute('disabled');
+    stopCallBtnEl.setAttribute('disabled', true);
+    remoteVideoEl.classList.remove('hidden');
+    remoteCanvasEl.classList.add('hidden');
+  };
+  
+  const handleStopCall = () => {
+    stopCall();
+    sendMessage({ messageType: 'HANG_UP', message: '' });
+  };
+
+  const handleStartCall = async () => {
+    try {
+      await openPeerConnection(stream);
+      createOffer(sendMessage);
+      startCallBtnEl.setAttribute('disabled', true);
+      stopCallBtnEl.removeAttribute('disabled');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // startVideo();
   // renderCanvas(localCanvasEl);
 
@@ -132,6 +192,10 @@ const copyToClipboard = async () => {
   filterOptionsSelectEl.addEventListener('change', handleSelectChange);
 
   clipboardBtn.addEventListener('click', copyToClipboard);
+
+  startCallBtnEl.addEventListener('click', handleStartCall);
+
+  stopCallBtnEl.addEventListener('click', handleStopCall);
 
   initializeVideoChat();
 

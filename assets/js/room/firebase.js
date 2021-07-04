@@ -23,7 +23,17 @@ const checkRoomAvailability = async (database) => {
   }
 };
 
-export const joinRoom = async (roomId, username, { handleUserPresence }) => {
+export const joinRoom = async (
+  roomId,
+  username,
+  {
+    handleUserPresence,
+    handleUpdateRemoteFilter,
+    handleOfferMessage,
+    handleAnswerMessage,
+    handleICECandidateMessage,
+    stopCall,
+  }) => {
     try {
       // save username to `firebase.js` file for reference
       roomUsername = username;
@@ -53,7 +63,13 @@ export const joinRoom = async (roomId, username, { handleUserPresence }) => {
 
         // turn on event listeners
         initUserListeners(database, handleUserPresence);
-        initMessageListeners(database);
+        initMessageListeners(database, {
+          handleUpdateRemoteFilter,
+          handleOfferMessage,
+          handleAnswerMessage,
+          handleICECandidateMessage,
+          stopCall
+        });
   
         return true;
       //});
@@ -78,13 +94,41 @@ const initUserListeners = (database, handleUserPresence) => {
   });
 };
 
-const initMessageListeners = (database) => {
+const initMessageListeners = (
+  database,
+  {
+    handleUpdateRemoteFilter,
+    handleOfferMessage,
+    handleAnswerMessage,
+    handleICECandidateMessage,
+    stopCall,
+  }
+) => {
   database.child('/messages').on('child_added', (messageSnapshot) => {
     const messageData = messageSnapshot.val();
     if (messageData.username === roomUsername) {
       return;
     }
-    console.log(messageData);
+
+    switch (messageData.messageType) {
+      case 'CANVAS_FILTER':
+        handleUpdateRemoteFilter(messageData.message);
+        break;
+      case 'OFFER':
+        handleOfferMessage(messageData);
+        break;
+      case 'ANSWER':
+        handleAnswerMessage(messageData);
+        break;
+      case 'ICE_CANDIDATE':
+        handleICECandidateMessage(messageData);
+        break;
+      case 'HANG_UP':
+        stopCall();
+        break;
+      default:
+        return;
+    }
   });
 };
 
